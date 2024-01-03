@@ -62,7 +62,11 @@ function getStoredBadgeValue(tabId) {
 function load() {
 
   function loadResult(result) {
-    loadList(result.badUrls,result.supportUrls,result.badsCustom,result.supportsCustom);
+    badUrls = result.badUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/bad.csv";
+    supportUrls = result.supportUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/support.csv";
+    badsCustom = result.badsCustom || "";
+    supportsCustom = result.supportsCustom || "";
+    loadList(badUrls,supportUrls,badsCustom,supportsCustom);
   }
 
   function onError(error) {
