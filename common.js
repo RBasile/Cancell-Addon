@@ -21,11 +21,9 @@ function generateRegexPatterns(actor,strong) {
     new RegExp(`\\b${shortFirstName}\\.? ${lastName}\\b`, 'gi'),
   ];
   }
-  
 }
 
 function generateSavePatterns(actors,actorsSupport) {
-
   regexPatterns = []
   actors.forEach(actor => {
     regexPatterns = regexPatterns.concat(generateRegexPatterns(actor,true));
@@ -65,7 +63,6 @@ async function loadAndParseCSV(urls) {
       console.error('Error fetching or parsing CSV:', error);
     }
   }
-
   return allActors;
 }
 
@@ -78,13 +75,10 @@ async function parseCustomText(text) {
         return { firstName, lastName };
       });
       allActors = allActors.concat(actors);
-  
   return allActors;
 }
 
-
 function loadList(badUrls,supportUrls,badsCustom,supportsCustom) {
-
   // Create promises for parsing operations
   let actorsPromise = loadAndParseCSV(badUrls);
   let supportsPromise = loadAndParseCSV(supportUrls);

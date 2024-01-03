@@ -1,8 +1,3 @@
-
-browser.tabs.onUpdated.addListener(updateBadge);
-browser.tabs.onActivated.addListener(updateBadge);
-badgeValues = [];
-
 function updateBadge(activeInfo) {
   if (activeInfo.tabId) {id = activeInfo.tabId}
   else {id = activeInfo}
@@ -27,7 +22,6 @@ function updateBadge(activeInfo) {
   });
 }
 
-
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.veryBadCounter !== undefined && message.badCounter !== undefined) {
     storeBadgeValue(sender.tab.id, message.veryBadCounter,message.badCounter);
@@ -36,31 +30,21 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     return
   }
-
   if (message.request === "getValues") {
-    // Fetch the value and send it back
-    const value = getStoredBadgeValue(message.tabId); // The logic to get the required value
+    const value = getStoredBadgeValue(message.tabId);
     sendResponse({ "values": value });
   }
-
-
 });
 
 function storeBadgeValue(tabId, veryBadValue,badValue) {
-  // Use an in-memory object or browser.storage.local
-  // For in-memory object:
   badgeValues[tabId] = [veryBadValue,badValue];
 }
 
 function getStoredBadgeValue(tabId) {
-  // Retrieve from in-memory object or browser.storage.local
-  // For in-memory object:
   return badgeValues[tabId] || '';
 }
 
-
 function load() {
-
   function loadResult(result) {
     badUrls = result.badUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/bad.csv";
     supportUrls = result.supportUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/support.csv";
@@ -68,17 +52,18 @@ function load() {
     supportsCustom = result.supportsCustom || "";
     loadList(badUrls,supportUrls,badsCustom,supportsCustom);
   }
-
   function onError(error) {
     console.log(`Error: ${error}`);
   }
-
   let getting = browser.storage.sync.get();
   getting.then(loadResult, onError);
 }
 
+badgeValues = [];
 load();
 
+browser.tabs.onUpdated.addListener(updateBadge);
+browser.tabs.onActivated.addListener(updateBadge);
 browser.tabs.onRemoved.addListener((tabId) => {
   delete badgeValues[tabId];
 });

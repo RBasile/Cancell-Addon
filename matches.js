@@ -49,7 +49,6 @@ function getRandomCensorStringLow(inputString) {
   return result;
 }
 
-
 function checkAndCensorText(node) {
   let text = removeAccents(node.textContent);
   let censored = false;
@@ -109,10 +108,10 @@ function sentCounter() {
   //console.log(veryBadCounter,badCounter)
 }
 
-
 function onError(e) {
   console.error(e);
 }
+
 var regexPatterns = [];
 var regexPatternsSupport = [];
 var badCounter = 0;
