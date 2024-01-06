@@ -1,3 +1,15 @@
+function getBrowser() {
+    if (typeof chrome !== "undefined") {
+      if (typeof browser !== "undefined") {
+        return "Firefox";
+      } else {
+        return "Chrome";
+      }
+    } else {
+      return "Edge";
+    }
+  }
+
 function removeAccents(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -8,38 +20,36 @@ function generateRegexPatterns(actor,strong) {
   const shortFirstName = firstName.charAt(0);
   if (strong) {
     return [
-    new RegExp(`\\b${firstName} ${lastName}\\b`, 'gi'),
-    new RegExp(`\\b${lastName} ${firstName}\\b`, 'gi'),
-    new RegExp(`\\b${lastName}\\b`, 'gi'),
-    new RegExp(`\\b${shortFirstName}\\.? ${lastName}\\b`, 'gi'),
+    new RegExp(`\\b${firstName} ${lastName}\\b`, 'gi').toString(),
+    new RegExp(`\\b${lastName} ${firstName}\\b`, 'gi').toString(),
+    new RegExp(`\\b${lastName}\\b`, 'gi').toString(),
+    new RegExp(`\\b${shortFirstName}\\.? ${lastName}\\b`, 'gi').toString(),
   ];
   }
   else{
     return [
-    new RegExp(`\\b${firstName} ${lastName}\\b`, 'gi'),
-    new RegExp(`\\b${lastName} ${firstName}\\b`, 'gi'),
-    new RegExp(`\\b${shortFirstName}\\.? ${lastName}\\b`, 'gi'),
+    new RegExp(`\\b${firstName} ${lastName}\\b`, 'gi').toString(),
+    new RegExp(`\\b${lastName} ${firstName}\\b`, 'gi').toString(),
+    new RegExp(`\\b${shortFirstName}\\.? ${lastName}\\b`, 'gi').toString(),
   ];
   }
 }
 
 function generateSavePatterns(actors,actorsSupport) {
-  regexPatterns = []
+  let regexPatterns = []
   actors.forEach(actor => {
     regexPatterns = regexPatterns.concat(generateRegexPatterns(actor,true));
   });
-  browser.storage.local.set({
-    regexPatterns
-  });
-  //
-  regexPatternsSupport = []
+  //console.log(regexPatterns);
+  chrome.storage.local.set({regexPatterns});
+  
+  let regexPatternsSupport = []
   actorsSupport.forEach(actor => {
     regexPatternsSupport = regexPatternsSupport.concat(generateRegexPatterns(actor,false));
   });
-  
-  browser.storage.local.set({
-    regexPatternsSupport
-  });
+
+  //console.log(regexPatternsSupport);
+  chrome.storage.local.set({regexPatternsSupport});
 }
 
 async function loadAndParseCSV(urls) {

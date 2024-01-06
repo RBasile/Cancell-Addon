@@ -1,5 +1,5 @@
 function getActiveTab() {
-  return browser.tabs.query({currentWindow: true, active: true});
+  return chrome.tabs.query({currentWindow: true, active: true});
 }
 //reply from background script for bad and support values for the current tab
 function updatePopupContent(response) {
@@ -26,7 +26,7 @@ getActiveTab().then(sentValuesRequest);
 
 function sentValuesRequest(tabs){
     let tabId = tabs[0].id;
-    browser.runtime.sendMessage({ request: "getValues", "tabId":tabId})
+    chrome.runtime.sendMessage({ request: "getValues", "tabId":tabId})
     .then(updatePopupContent)
     .catch(error => {
         console.error("Error receiving message:", error);

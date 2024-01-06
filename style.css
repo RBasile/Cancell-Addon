@@ -2,3 +2,9 @@ html, body {
   width: auto;
   overflow: hidden;
 }
+
+.panel{
+    width: max-content;
+    margin: 10px;
+    font-size: 16px;
+}

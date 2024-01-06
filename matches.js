@@ -96,15 +96,21 @@ function observeMutations() {
 }
 
 function scanPage(restoredSettings) {
-  regexPatterns = restoredSettings.regexPatterns;
-  regexPatternsSupport = restoredSettings.regexPatternsSupport;
-  //console.log(regexPatternsSupport);
+  regexPatterns = restoredSettings.regexPatterns.map(patternString => {
+                let match = patternString.match(/\/(.+)\/(.*)/);
+                return new RegExp(match[1], match[2]);
+  });
+  regexPatternsSupport = restoredSettings.regexPatternsSupport.map(patternString => {
+                let match = patternString.match(/\/(.+)\/(.*)/);
+                return new RegExp(match[1], match[2]);
+  });
+  //console.log(regexPatterns,regexPatternsSupport);
   document.querySelectorAll('body').forEach(element => processNode(element));
   sentCounter();//setInterval(func, delay)
   observeMutations();
 }
 function sentCounter() {
-  browser.runtime.sendMessage({"veryBadCounter": veryBadCounter ,"badCounter":badCounter});
+  chrome.runtime.sendMessage({"veryBadCounter": veryBadCounter ,"badCounter":badCounter});
   //console.log(veryBadCounter,badCounter)
 }
 
@@ -117,4 +123,4 @@ var regexPatternsSupport = [];
 var badCounter = 0;
 var veryBadCounter = 0;
 
-browser.storage.local.get().then(scanPage, onError);
+chrome.storage.local.get().then(scanPage, onError);

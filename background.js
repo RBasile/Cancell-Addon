@@ -1,28 +1,32 @@
+if (typeof importScripts !== "undefined"){
+  importScripts('common.js')
+}
+
 function updateBadge(activeInfo) {
-  if (activeInfo.tabId) {id = activeInfo.tabId}
-  else {id = activeInfo}
+  if (activeInfo.tabId) {var id = activeInfo.tabId}
+  else {var id = activeInfo}
 
   let value = getStoredBadgeValue(id); // Retrieve the stored value
   let result = value[0] + value[1];
 
   if (result == 0 || isNaN(result)) { result = '';}
-  //browser.browserAction.setBadgeTextColor({ color: "blue",tabId: activeInfo.tabId });
+  //chrome.action.setBadgeTextColor({ color: "blue",tabId: activeInfo.tabId });
   if (result >= 5){
-    browser.browserAction.setBadgeBackgroundColor({ color: "#FF391F",tabId: id });
+    chrome.action.setBadgeBackgroundColor({ color: "#FF391F",tabId: id });
   }
   else if (result >= 2){
-    browser.browserAction.setBadgeBackgroundColor({ color: "#FFE063",tabId: id });
+    chrome.action.setBadgeBackgroundColor({ color: "#FFE063",tabId: id });
   }
   else{
-    browser.browserAction.setBadgeBackgroundColor({ color: "#C4C4C4",tabId: id });
+    chrome.action.setBadgeBackgroundColor({ color: "#C4C4C4",tabId: id });
   }
-  browser.browserAction.setBadgeText({
+  chrome.action.setBadgeText({
     text: result.toString(),
     tabId: id
   });
 }
 
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.veryBadCounter !== undefined && message.badCounter !== undefined) {
     storeBadgeValue(sender.tab.id, message.veryBadCounter,message.badCounter);
     if (sender.tab.active) {
@@ -46,24 +50,25 @@ function getStoredBadgeValue(tabId) {
 
 function load() {
   function loadResult(result) {
-    badUrls = result.badUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/bad.csv";
-    supportUrls = result.supportUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/support.csv";
-    badsCustom = result.badsCustom || "";
-    supportsCustom = result.supportsCustom || "";
+    let badUrls = result.badUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/bad.csv";
+    let supportUrls = result.supportUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/support.csv";
+    let badsCustom = result.badsCustom || "";
+    let supportsCustom = result.supportsCustom || "";
     loadList(badUrls,supportUrls,badsCustom,supportsCustom);
   }
   function onError(error) {
     console.log(`Error: ${error}`);
   }
-  let getting = browser.storage.sync.get();
+  let getting = chrome.storage.sync.get();
   getting.then(loadResult, onError);
 }
 
-badgeValues = [];
+var badgeValues = [];
 load();
 
-browser.tabs.onUpdated.addListener(updateBadge);
-browser.tabs.onActivated.addListener(updateBadge);
-browser.tabs.onRemoved.addListener((tabId) => {
+
+chrome.tabs.onUpdated.addListener(updateBadge);
+chrome.tabs.onActivated.addListener(updateBadge);
+chrome.tabs.onRemoved.addListener((tabId) => {
   delete badgeValues[tabId];
 });

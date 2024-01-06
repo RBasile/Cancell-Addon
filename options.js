@@ -3,7 +3,7 @@ function saveOptionText(textfield)
   if (value == false) {
     value = ""
   }
-  browser.storage.sync.set({
+  chrome.storage.sync.set({
     [textfield]: value
   });
   return value;
@@ -12,10 +12,10 @@ function saveOptionText(textfield)
 function saveOptions(e) {
   e.preventDefault();
 
-  badUrls = saveOptionText("badUrls");
-  supportUrls = saveOptionText("supportUrls");
-  badsCustom = saveOptionText("badsCustom");
-  supportsCustom = saveOptionText("supportsCustom");
+  let badUrls = saveOptionText("badUrls");
+  let supportUrls = saveOptionText("supportUrls");
+  let badsCustom = saveOptionText("badsCustom");
+  let supportsCustom = saveOptionText("supportsCustom");
 
   loadList(badUrls,supportUrls,badsCustom,supportsCustom);
 }
@@ -30,7 +30,7 @@ function restoreOptions() {
   function onError(error) {
     console.log(`Error: ${error}`);
   }
-  let getting = browser.storage.sync.get();
+  let getting = chrome.storage.sync.get();
   getting.then(setCurrentChoice, onError);
 }
 

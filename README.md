@@ -1,5 +1,5 @@
 # Cancell Add-on for Firefox
-Censors the names cancel celebrities and their supporters
+Censors the names of canceled celebrities and their supporters
 ## Donwload from AMO
 https://addons.mozilla.org/fr/firefox/addon/Cancell/
 
