@@ -2,11 +2,11 @@
   "homepage_url": "https://rbasile.fr",
   "manifest_version": 3,
   "name": "Cancell",
-  "version": "0.2",
+  "version": "0.2.4",
 
   "description": "Censure des noms des célébrités Cancel et de leurs partisans",
 
-  //"browser_specific_settings": {"gecko": {"id": "cancell@rbasile.fr"}},
+  "browser_specific_settings": {"gecko": {"id": "cancell@rbasile.fr"}},
 
   "icons": {
     "48": "icons/default48.png",
@@ -20,8 +20,7 @@
     }
   ],
   "background": {
-  //"scripts": ["common.js","background.js"]
-  "service_worker": "background.js"
+  "scripts": ["common.js","background.js"]
   },
   "options_ui": {
     "page": "options.html"
@@ -30,5 +29,5 @@
     "default_icon": "icons/default48.png",
     "default_popup": "popup.html"
   },
-  "permissions": ["storage","tabs"],
+  "permissions": ["storage"]
 }

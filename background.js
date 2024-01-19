@@ -48,23 +48,21 @@ function getStoredBadgeValue(tabId) {
   return badgeValues[tabId] || '';
 }
 
-function load() {
-  function loadResult(result) {
-    let badUrls = result.badUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/bad.csv";
-    let supportUrls = result.supportUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/support.csv";
-    let badsCustom = result.badsCustom || "";
-    let supportsCustom = result.supportsCustom || "";
-    loadList(badUrls,supportUrls,badsCustom,supportsCustom);
-  }
-  function onError(error) {
-    console.log(`Error: ${error}`);
-  }
-  let getting = chrome.storage.sync.get();
-  getting.then(loadResult, onError);
+
+function loadResult(result) {
+  let badUrls = result.badUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/bad.csv";
+  let supportUrls = result.supportUrls || "https://raw.githubusercontent.com/RBasile/Cancell-Addon/main/lists/support.csv";
+  let badsCustom = result.badsCustom || "";
+  let supportsCustom = result.supportsCustom || "";
+  loadList(badUrls,supportUrls,badsCustom,supportsCustom);
+}
+function onError(error) {
+  console.log(`Error: ${error}`);
 }
 
 var badgeValues = [];
-load();
+let getting = chrome.storage.sync.get();
+getting.then(loadResult, onError);
 
 
 chrome.tabs.onUpdated.addListener(updateBadge);
@@ -72,3 +70,14 @@ chrome.tabs.onActivated.addListener(updateBadge);
 chrome.tabs.onRemoved.addListener((tabId) => {
   delete badgeValues[tabId];
 });
+
+function checkboxDefault(results){
+if (results.checkboxText == undefined || results.checkboxImage == undefined){
+  chrome.storage.sync.set({
+      checkboxText: true,
+      checkboxImage: true
+    });
+  }
+}
+
+chrome.storage.sync.get(["checkboxText","checkboxImage"]).then(checkboxDefault,onError)

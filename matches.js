@@ -96,18 +96,23 @@ function observeMutations() {
 }
 
 function scanPage(restoredSettings) {
-  regexPatterns = restoredSettings.regexPatterns.map(patternString => {
-                let match = patternString.match(/\/(.+)\/(.*)/);
-                return new RegExp(match[1], match[2]);
-  });
-  regexPatternsSupport = restoredSettings.regexPatternsSupport.map(patternString => {
-                let match = patternString.match(/\/(.+)\/(.*)/);
-                return new RegExp(match[1], match[2]);
-  });
-  //console.log(regexPatterns,regexPatternsSupport);
-  document.querySelectorAll('body').forEach(element => processNode(element));
-  sentCounter();//setInterval(func, delay)
-  observeMutations();
+  if (restoredSettings[0].checkboxText){
+    regexPatterns = restoredSettings[1].regexPatterns.map(patternString => {
+                  let match = patternString.match(/\/(.+)\/(.*)/);
+                  return new RegExp(match[1], match[2]);
+    });
+    regexPatternsSupport = restoredSettings[1].regexPatternsSupport.map(patternString => {
+                  let match = patternString.match(/\/(.+)\/(.*)/);
+                  return new RegExp(match[1], match[2]);
+    });
+    //console.log(regexPatterns,regexPatternsSupport);
+    document.querySelectorAll('body').forEach(element => processNode(element));
+    sentCounter();//setInterval(func, delay)
+    observeMutations();
+  }
+  else{
+    sentCounter();
+  }
 }
 function sentCounter() {
   chrome.runtime.sendMessage({"veryBadCounter": veryBadCounter ,"badCounter":badCounter});
@@ -123,4 +128,7 @@ var regexPatternsSupport = [];
 var badCounter = 0;
 var veryBadCounter = 0;
 
-chrome.storage.local.get().then(scanPage, onError);
+let localStorage = chrome.storage.local.get()
+let localSync = chrome.storage.sync.get(["checkboxText","checkboxImage"])
+
+Promise.all([localSync,localStorage]).then(scanPage, onError);
