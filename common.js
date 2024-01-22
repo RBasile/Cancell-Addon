@@ -38,7 +38,7 @@ function generateRegexPatterns(actor,strong) {
 function generateSavePatterns(actors,actorsSupport) {
   let regexPatterns = []
   actors.forEach(actor => {
-    regexPatterns = regexPatterns.concat(generateRegexPatterns(actor,true));
+    regexPatterns = regexPatterns.concat(generateRegexPatterns(actor,false));
   });
   //console.log(regexPatterns);
   chrome.storage.local.set({regexPatterns});

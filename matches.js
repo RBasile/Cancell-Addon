@@ -75,10 +75,48 @@ function checkAndCensorText(node) {
   }
 }
 
+function blurImage(img, level) {
+  if (level === 'high') {
+    img.style.filter = 'blur(20px)'; // Higher blur for veryBadCounter
+  } else if (level === 'low') {
+    img.style.filter = 'blur(8px)'; // Lower blur for badCounter
+  }
+}
+
+function checkAndBlurImage(imgNode) {
+  let altText = removeAccents(imgNode.alt);
+  let blurLevel = null;
+
+  // Check against the more severe patterns
+  regexPatterns.forEach(regex => {
+    if (regex.test(altText)) {
+      veryBadCounter += 1;
+      blurLevel = 'high';
+    }
+  });
+
+  // Check against the less severe patterns
+  regexPatternsSupport.forEach(regex => {
+    if (regex.test(altText)) {
+      badCounter += 1;
+      if (!blurLevel) {
+        blurLevel = 'low';
+      }
+    }
+  });
+
+  if (blurLevel) {
+    blurImage(imgNode, blurLevel);
+  }
+}
+
 function processNode(node) {
-  if (node.nodeType === Node.TEXT_NODE) {
+  if (node.nodeType === Node.TEXT_NODE && censorText) {
     checkAndCensorText(node);
   } else if (node.nodeType === Node.ELEMENT_NODE) {
+    if (node.tagName === 'IMG' && node.hasAttribute('alt') && censorImg) {
+      checkAndBlurImage(node);
+    }
     Array.from(node.childNodes).forEach(child => processNode(child));
   }
 }
@@ -96,7 +134,9 @@ function observeMutations() {
 }
 
 function scanPage(restoredSettings) {
-  if (restoredSettings[0].checkboxText){
+  censorText = restoredSettings[0].checkboxText;
+  censorImg = restoredSettings[0].checkboxImage;
+  if (censorText || censorImg){
     regexPatterns = restoredSettings[1].regexPatterns.map(patternString => {
                   let match = patternString.match(/\/(.+)\/(.*)/);
                   return new RegExp(match[1], match[2]);
@@ -127,6 +167,9 @@ var regexPatterns = [];
 var regexPatternsSupport = [];
 var badCounter = 0;
 var veryBadCounter = 0;
+
+var censorText = true;
+var censorImg = true;
 
 let localStorage = chrome.storage.local.get()
 let localSync = chrome.storage.sync.get(["checkboxText","checkboxImage"])
